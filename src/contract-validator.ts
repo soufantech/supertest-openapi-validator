@@ -57,7 +57,9 @@ function translateSupertestResponse(
   };
 }
 
-export class Validator {
+export type ContractValidationError = Error | IPrismDiagnostic[];
+
+export class ContractValidator {
   private readonly validators: OperationValidator[];
 
   constructor(
