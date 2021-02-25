@@ -15,7 +15,7 @@ import {
   FulfilledHttpRequest,
   OperationRouter,
   OperationValidator,
-} from './validator.contracts';
+} from './operation-validator.contracts';
 
 export const routeOperation: OperationRouter = (
   operations: IHttpOperation[],
