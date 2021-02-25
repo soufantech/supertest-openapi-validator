@@ -6,7 +6,7 @@
 
 <div align="center">
   <h1>@soufantech/supertest-openapi-validator</h1>
-  <p>Performs OpenAPI contract checks using supertest</p>
+  <p>Performs OpenAPI contract checks with supertest</p>
 </div>
 
 <br />
