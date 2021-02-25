@@ -7,3 +7,4 @@ export {
 export { default as route } from '@stoplight/prism-http/dist/router';
 export { HttpMethod, IHttpOperation } from '@stoplight/types';
 export { IPrismDiagnostic } from '@stoplight/prism-core';
+export { getHttpOperationsFromSpec } from '@stoplight/prism-cli/dist/operations';
