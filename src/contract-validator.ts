@@ -74,7 +74,7 @@ export class ContractValidator {
 
   validate(
     response: supertest.Response,
-  ): Result<supertest.Response, Error | IPrismDiagnostic[]> | void {
+  ): Result<supertest.Response, Error | IPrismDiagnostic[]> {
     const fulfilledReq = translateSupertestResponse(response);
 
     return routeOperation(this.operations, fulfilledReq)
