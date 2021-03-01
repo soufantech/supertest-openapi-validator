@@ -1,5 +1,6 @@
 import loadContract from './helpers/load-contract';
 import request from './helpers/request';
+import { OpenapiOperationRoutingError } from '..';
 
 test('validate returns an untouched reference of the response object under validation.', async () => {
   const contract = await loadContract();
@@ -12,14 +13,14 @@ test('validate returns an untouched reference of the response object under valid
   expect(validatedRes).toStrictEqual(res);
 });
 
-test('validation pass with a contract-matching request and response.', async () => {
+test('Validation pass with a contract-matching request and response.', async () => {
   const contract = await loadContract();
   const validator = contract.createValidator();
 
   await request.get('/square/100').expect(validator.getChecker());
 });
 
-test('validation fails with an unspecified path.', async () => {
+test('Validation fails with an unspecified path.', async () => {
   const contract = await loadContract();
   const validator = contract.createValidator();
 
@@ -27,5 +28,21 @@ test('validation fails with an unspecified path.', async () => {
 
   expect(() => {
     validator.validate(res).getOrThrow();
-  }).toThrowError('Route not resolved, no path matched');
+  }).toThrowError(OpenapiOperationRoutingError);
 });
+
+// test('Validation fails with a bad request path.', async () => {
+//   const contract = await loadContract();
+//   const validator = contract.createValidator();
+
+//   const res = await request.get('/users');
+
+//   // expect(() => {
+//   //   validator.validate(res).getOrThrow();
+//   // }).toThrowError('Route not resolved, no path matched');
+
+//   console.log(validator.validate(res).getOrThrow().body);
+
+//   // console.log(error);
+//   // console.log(inspect(error, true, null));
+// });

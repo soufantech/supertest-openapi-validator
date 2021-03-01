@@ -1,10 +1,6 @@
-import {
-  IHttpRequest,
-  IHttpResponse,
-  IHttpOperation,
-  IPrismDiagnostic,
-} from './prism';
+import { IHttpRequest, IHttpResponse, IHttpOperation } from './prism';
 import { Result } from '@soufantech/result';
+import { OpenapiOperationError, OpenapiOperationRoutingError } from './errors';
 
 export type FulfilledHttpRequest = {
   req: IHttpRequest;
@@ -14,7 +10,7 @@ export type FulfilledHttpRequest = {
 export interface OperationValidator {
   (operation: IHttpOperation, fulfilledRequest: FulfilledHttpRequest): Result<
     FulfilledHttpRequest,
-    Error | IPrismDiagnostic[]
+    OpenapiOperationError
   >;
 }
 
@@ -22,5 +18,5 @@ export interface OperationRouter {
   (
     operations: IHttpOperation[],
     fulfilledRequest: FulfilledHttpRequest,
-  ): Result<IHttpOperation, Error>;
+  ): Result<IHttpOperation, OpenapiOperationRoutingError>;
 }

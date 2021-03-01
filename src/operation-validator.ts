@@ -16,6 +16,12 @@ import {
   OperationRouter,
   OperationValidator,
 } from './operation-validator.contracts';
+import {
+  OpenapiOperationRoutingError,
+  OpenapiOperationValidationError,
+} from './errors';
+
+export { IHttpOperation } from './prism';
 
 export const routeOperation: OperationRouter = (
   operations: IHttpOperation[],
@@ -26,8 +32,12 @@ export const routeOperation: OperationRouter = (
       resources: operations,
       input: fulfilledReq.req,
     }),
-    fold<Error, IHttpOperation, Result<IHttpOperation, Error>>(
-      failure,
+    fold<
+      Error,
+      IHttpOperation,
+      Result<IHttpOperation, OpenapiOperationRoutingError>
+    >(
+      (err) => failure(new OpenapiOperationRoutingError(fulfilledReq, err)),
       success,
     ),
   );
@@ -45,8 +55,12 @@ export const validateRequest: OperationValidator = (
     fold<
       IPrismDiagnostic[],
       IHttpRequest,
-      Result<FulfilledHttpRequest, IPrismDiagnostic[]>
-    >(failure, () => success(fulfilledReq)),
+      Result<FulfilledHttpRequest, OpenapiOperationValidationError>
+    >(
+      (diagnostics) =>
+        failure(new OpenapiOperationValidationError(fulfilledReq, diagnostics)),
+      () => success(fulfilledReq),
+    ),
   );
 };
 
@@ -62,8 +76,12 @@ export const validateSecurity: OperationValidator = (
     fold<
       IPrismDiagnostic[],
       Pick<IHttpRequest, 'url' | 'headers'>,
-      Result<FulfilledHttpRequest, IPrismDiagnostic[]>
-    >(failure, () => success(fulfilledReq)),
+      Result<FulfilledHttpRequest, OpenapiOperationValidationError>
+    >(
+      (diagnostics) =>
+        failure(new OpenapiOperationValidationError(fulfilledReq, diagnostics)),
+      () => success(fulfilledReq),
+    ),
   );
 };
 
@@ -79,7 +97,11 @@ export const validateResponse: OperationValidator = (
     fold<
       IPrismDiagnostic[],
       IHttpResponse,
-      Result<FulfilledHttpRequest, IPrismDiagnostic[]>
-    >(failure, () => success(fulfilledReq)),
+      Result<FulfilledHttpRequest, OpenapiOperationValidationError>
+    >(
+      (diagnostics) =>
+        failure(new OpenapiOperationValidationError(fulfilledReq, diagnostics)),
+      () => success(fulfilledReq),
+    ),
   );
 };
