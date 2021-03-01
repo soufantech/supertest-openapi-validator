@@ -4,7 +4,7 @@ import { getHttpOperationsFromSpec, IHttpOperation } from './prism';
 export class OpenapiContract {
   constructor(private readonly operations: IHttpOperation[]) {}
 
-  createValidator(validateOptions: ValidateOptions): ContractValidator {
+  createValidator(validateOptions?: ValidateOptions): ContractValidator {
     return new ContractValidator(this.operations, validateOptions);
   }
 }
