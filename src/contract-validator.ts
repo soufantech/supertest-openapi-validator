@@ -13,6 +13,10 @@ import {
   validateResponse,
 } from './operation-validator';
 
+export interface SupertestChecker {
+  (res: supertest.Response): supertest.Response;
+}
+
 export type ValidateSettings = {
   response: boolean;
   request: boolean;
@@ -70,6 +74,10 @@ export class ContractValidator {
       ...defaultValidateSettings,
       ...validateOptions,
     });
+  }
+
+  getChecker(): SupertestChecker {
+    return (res: supertest.Response) => this.validate(res).getOrThrow();
   }
 
   validate(
