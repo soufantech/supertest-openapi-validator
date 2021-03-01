@@ -1,0 +1,191 @@
+openapi: 3.0.2
+paths:
+  /square/{number}:
+    get:
+      operationId: getNumberSquared
+      summary: Get a number squared.
+      parameters:
+        - in: path
+          name: number
+          schema:
+            type: integer
+          required: true
+          description: Number to be squared.
+      responses:
+        200:
+          description: The squared number.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  number:
+                    type: integer
+                required:
+                  - number
+  /status/{httpStatusCode}:    
+    get:
+      operationId: getStatusCode
+      summary: Returns a reponse with the given status code
+      parameters:
+        - $ref: '#/components/parameters/HttpStatusCode'
+      responses:
+        200:
+          description: Get a response with the status code in the body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                required:
+                  - status
+  /message:
+    get:
+      operationId: get message
+      summary: Returns a reponse with the given status code
+      parameters:
+        - in: query
+          name: text
+          schema:
+            type: string
+      responses:
+        200:
+          description: The message provided.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "It works!"
+  /secured:
+    get:
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: User has access.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: boolean
+                required:
+                  - access
+        401:
+          description: User is unauthenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: ['UNATHENTICATED']
+                required:
+                  - error
+        403:
+            description: User is unauthorized.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      enum: ['UNAUTHORIZED']
+                  required:
+                    - error
+  /users:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          $ref: "#/components/schemas/User"
+    get:
+        security:
+          - BearerAuth: []
+        responses:
+          200:
+            description: User has access.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    data:
+                      user:
+                        $ref: "#/components/schemas/User"
+                  required:
+                    - access
+          401:
+            description: User is unauthenticated.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      enum: ['UNATHENTICATED']
+                  required:
+                    - error
+          403:
+              description: User is unauthorized.
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+                        enum: ['UNAUTHORIZED']
+                    required:
+                      - error
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  headers:
+    WWW-Authenticate:
+      description: Defines the authentication method that should be used to gain access to a resource (RFC 7235, section 4.1).
+      schema:
+        type: string
+        example: "Bearer"
+  parameters:
+    HttpStatusCode:
+      description: HTTP status code.
+      name: httpStatusCode
+      in: path
+      schema:
+        type: integer
+      required: true
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          pattern: '^[a-z]{3,8}$'
+          example: johndoe
+        email:
+          type: string
+          format: email
+          example: "johndoe@example.com"
+      required:
+        - email
+  responses:
+    UserCreated:
+      description: "User created successfully"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/User"
+
