@@ -57,47 +57,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "It works!"
-  /secured:
-    get:
-      security:
-        - BearerAuth: []
-      responses:
-        200:
-          description: User has access.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: boolean
-                required:
-                  - access
-        401:
-          description: User is unauthenticated.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    enum: ['UNATHENTICATED']
-                required:
-                  - error
-        403:
-            description: User is unauthorized.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      enum: ['UNAUTHORIZED']
-                  required:
-                    - error
+                example: 'It works!'
   /users:
     post:
       requestBody:
