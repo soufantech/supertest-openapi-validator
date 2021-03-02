@@ -87,9 +87,7 @@ describe('Endpoint GET /users/johndoe', () => {
       .set('Authorization', 'Bearer abc123')
       .expect('Content-Type', /application\/json/)
       .expect(200)
-      .expect({
-        user: USER_JOHN_DOE,
-      });
+      .expect(USER_JOHN_DOE);
   });
 
   test('returns an application/json 401 response if Authorization header is not present.', async () => {

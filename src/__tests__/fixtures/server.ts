@@ -44,7 +44,7 @@ server.get('/users/johndoe', (req, res) => {
     return;
   }
 
-  res.status(200).json({ user: USER_JOHN_DOE });
+  res.status(200).json(USER_JOHN_DOE);
 });
 
 server.get('/secret', (_req, res) => {

@@ -60,6 +60,8 @@ paths:
                 example: 'It works!'
   /users:
     post:
+      operationId: createUser
+      summary: Creates an user
       requestBody:
         content:
           application/json:
@@ -67,54 +69,75 @@ paths:
               $ref: "#/components/schemas/User"
       responses:
         201:
-          $ref: "#/components/schemas/User"
-    get:
-        security:
-          - BearerAuth: []
-        responses:
-          200:
-            description: User has access.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    data:
-                      user:
-                        $ref: "#/components/schemas/User"
-                  required:
-                    - access
-          401:
-            description: User is unauthenticated.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      enum: ['UNATHENTICATED']
-                  required:
-                    - error
-          403:
-              description: User is unauthorized.
-              content:
-                application/json:
-                  schema:
-                    type: object
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/User"
+                  - type: object
                     properties:
-                      error:
+                      id:
                         type: string
-                        enum: ['UNAUTHORIZED']
-                    required:
-                      - error
+                        format: uuid
+  /users/{username}:
+    get:
+      operationId: getUser
+      summary: Get user data
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: Username
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: User has access.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                required:
+                  - data
+        401:
+          description: User is unauthenticated.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: ['UNAUTHENTICATED']
+                required:
+                  - error
+        403:
+          description: User is unauthorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: ['UNAUTHORIZED']
+                required:
+                  - error
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
   headers:
-    WWW-Authenticate:
+    WWWAuthenticate:
       description: Defines the authentication method that should be used to gain access to a resource (RFC 7235, section 4.1).
       schema:
         type: string
