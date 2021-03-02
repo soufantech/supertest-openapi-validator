@@ -1,4 +1,3 @@
-import { IHttpOperation, IPrismDiagnostic } from './prism';
 import supertest from 'supertest';
 import { translateRequest, translateResponse } from './translators';
 import { Result, success, failure } from '@soufantech/result';
@@ -7,11 +6,13 @@ import {
   OperationValidator,
 } from './operation-validator.contracts';
 import {
+  IHttpOperation,
   routeOperation,
   validateSecurity,
   validateRequest,
   validateResponse,
 } from './operation-validator';
+import { OpenapiOperationError } from './errors';
 
 export interface SupertestChecker {
   (res: supertest.Response): supertest.Response;
@@ -44,8 +45,10 @@ const validators: Record<keyof ValidateSettings, OperationValidator> = {
 function filterValidator(selection: ValidateOptions): OperationValidator[] {
   return Object.entries(selection)
     .filter(([key, val]) => {
-      val === true &&
-        typeof validators[key as keyof ValidateSettings] === 'function';
+      return (
+        val === true &&
+        typeof validators[key as keyof ValidateSettings] === 'function'
+      );
     })
     .map(([key]) => validators[key as keyof ValidateSettings]);
 }
@@ -60,8 +63,6 @@ function translateSupertestResponse(
     req: translateRequest(supertestResponse.request),
   };
 }
-
-export type ContractValidationError = Error | IPrismDiagnostic[];
 
 export class ContractValidator {
   private readonly validators: OperationValidator[];
@@ -82,13 +83,13 @@ export class ContractValidator {
 
   validate(
     response: supertest.Response,
-  ): Result<supertest.Response, Error | IPrismDiagnostic[]> {
+  ): Result<supertest.Response, OpenapiOperationError> {
     const fulfilledReq = translateSupertestResponse(response);
 
     return routeOperation(this.operations, fulfilledReq)
       .fold((operation) => {
         return this.validators.reduce<
-          Result<FulfilledHttpRequest, Error | IPrismDiagnostic[]>
+          Result<FulfilledHttpRequest, OpenapiOperationError>
         >((res, validator) => {
           return res.flatMapSuccess((s) => validator(operation, s));
         }, success(fulfilledReq));

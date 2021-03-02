@@ -1,8 +1,11 @@
 import loadContract from './helpers/load-contract';
 import request from './helpers/request';
-import { OpenapiOperationRoutingError } from '..';
+import {
+  OpenapiOperationRoutingError,
+  OpenapiOperationValidationError,
+} from '..';
 
-test('validate returns an untouched reference of the response object under validation.', async () => {
+test('Validation pass returning an untouched reference of the response object under validation.', async () => {
   const contract = await loadContract();
   const validator = contract.createValidator();
 
@@ -20,29 +23,72 @@ test('Validation pass with a contract-matching request and response.', async () 
   await request.get('/square/100').expect(validator.getChecker());
 });
 
-test('Validation fails with an unspecified path.', async () => {
+test('Routing fails with an unspecified path.', async () => {
   const contract = await loadContract();
   const validator = contract.createValidator();
 
   const res = await request.get('/secret');
 
-  expect(() => {
-    validator.validate(res).getOrThrow();
-  }).toThrowError(OpenapiOperationRoutingError);
+  const validationError = validator
+    .validate(res)
+    .get() as OpenapiOperationRoutingError;
+
+  expect(validationError).toBeInstanceOf(OpenapiOperationRoutingError);
+  expect(validationError.code).toBe('NO_PATH_MATCHED_ERROR');
 });
 
-// test('Validation fails with a bad request path.', async () => {
-//   const contract = await loadContract();
-//   const validator = contract.createValidator();
+test('Routing fails if method does not match.', async () => {
+  const contract = await loadContract();
+  const validator = contract.createValidator();
 
-//   const res = await request.get('/users');
+  const res = await request.put('/message');
 
-//   // expect(() => {
-//   //   validator.validate(res).getOrThrow();
-//   // }).toThrowError('Route not resolved, no path matched');
+  const validationError = validator
+    .validate(res)
+    .get() as OpenapiOperationRoutingError;
 
-//   console.log(validator.validate(res).getOrThrow().body);
+  expect(validationError).toBeInstanceOf(OpenapiOperationRoutingError);
+  expect(validationError.code).toBe('NO_METHOD_MATCHED_ERROR');
+});
 
-//   // console.log(error);
-//   // console.log(inspect(error, true, null));
-// });
+test('Validation fails with bad input.', async () => {
+  const contract = await loadContract();
+  const validator = contract.createValidator();
+
+  const res = await request.get('/square/abc');
+
+  const validationError = validator
+    .validate(res)
+    .get() as OpenapiOperationValidationError;
+
+  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
+  expect(validationError.diagnostics).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        path: expect.arrayContaining(['path', 'number']),
+        code: 'type',
+      }),
+    ]),
+  );
+});
+
+test('Validation fails with a bad request path argument.', async () => {
+  const contract = await loadContract();
+  const validator = contract.createValidator();
+
+  const res = await request.get('/square/abc');
+
+  const validationError = validator
+    .validate(res)
+    .get() as OpenapiOperationValidationError;
+
+  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
+  expect(validationError.diagnostics).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        path: expect.arrayContaining(['path', 'number']),
+        code: 'type',
+      }),
+    ]),
+  );
+});
