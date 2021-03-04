@@ -1,8 +1,8 @@
 import loadContract from './helpers/load-contract';
 import request from './helpers/request';
-import { OpenapiOperationValidationError } from '..';
+import { OpenapiResponseOperationValidationError } from '../errors';
 
-test('Non-compliant response fails validation.', async () => {
+test('Non-compliant response status fails validation.', async () => {
   const contract = await loadContract();
   const validator = contract.createValidator();
 
@@ -10,9 +10,11 @@ test('Non-compliant response fails validation.', async () => {
 
   const validationError = validator
     .validate(res)
-    .get() as OpenapiOperationValidationError;
+    .get() as OpenapiResponseOperationValidationError;
 
-  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
+  expect(validationError).toBeInstanceOf(
+    OpenapiResponseOperationValidationError,
+  );
   expect(validationError.diagnostics).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
@@ -30,35 +32,17 @@ test('Non-compliant response still fails validation when request validation is t
 
   const validationError = validator
     .validate(res)
-    .get() as OpenapiOperationValidationError;
+    .get() as OpenapiResponseOperationValidationError;
 
   expect(res.body.number).toBeNull();
-  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
+  expect(validationError).toBeInstanceOf(
+    OpenapiResponseOperationValidationError,
+  );
   expect(validationError.diagnostics).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
         path: expect.arrayContaining(['body', 'number']),
         code: 'type',
-      }),
-    ]),
-  );
-});
-
-test('Non-compliant response fails validation.', async () => {
-  const contract = await loadContract();
-  const validator = contract.createValidator();
-
-  const res = await request.get('/status/318');
-
-  const validationError = validator
-    .validate(res)
-    .get() as OpenapiOperationValidationError;
-
-  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
-  expect(validationError.diagnostics).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        message: expect.stringContaining('status code'),
       }),
     ]),
   );

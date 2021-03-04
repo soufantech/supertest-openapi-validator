@@ -1,4 +1,8 @@
 openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: Fixture API
+  description: Minimal API for testing contract validation
 paths:
   /square/{number}:
     get:
@@ -63,22 +67,23 @@ paths:
       operationId: createUser
       summary: Creates an user
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/User"
       responses:
         201:
+          description: User created successfully
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/User"
-                  - type: object
-                    properties:
-                      id:
-                        type: string
-                        format: uuid
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+                required:
+                  - user
   /users/{username}:
     get:
       operationId: getUser
@@ -103,7 +108,7 @@ paths:
                   user:
                     $ref: "#/components/schemas/User"
                 required:
-                  - data
+                  - user
         401:
           description: User is unauthenticated.
           headers:
@@ -171,4 +176,3 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/User"
-

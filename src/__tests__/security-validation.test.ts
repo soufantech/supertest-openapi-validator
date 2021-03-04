@@ -1,6 +1,6 @@
 import loadContract from './helpers/load-contract';
 import request from './helpers/request';
-import { OpenapiOperationValidationError } from '..';
+import { OpenapiSecurityOperationValidationError } from '..';
 
 test('Missing Authorization header fails validation.', async () => {
   const contract = await loadContract();
@@ -10,9 +10,11 @@ test('Missing Authorization header fails validation.', async () => {
 
   const validationError = validator
     .validate(res)
-    .get() as OpenapiOperationValidationError;
+    .get() as OpenapiSecurityOperationValidationError;
 
-  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
+  expect(validationError).toBeInstanceOf(
+    OpenapiSecurityOperationValidationError,
+  );
   expect(validationError.diagnostics).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
@@ -34,9 +36,11 @@ test('Non-compliant request Authorization header fails validation.', async () =>
 
   const validationError = validator
     .validate(res)
-    .get() as OpenapiOperationValidationError;
+    .get() as OpenapiSecurityOperationValidationError;
 
-  expect(validationError).toBeInstanceOf(OpenapiOperationValidationError);
+  expect(validationError).toBeInstanceOf(
+    OpenapiSecurityOperationValidationError,
+  );
   expect(validationError.diagnostics).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
