@@ -13,6 +13,7 @@ import {
   validateResponse,
 } from './operation-validator';
 import { OpenapiOperationError } from './errors';
+import { ResponseWithEmbeddedRequest } from './response-with-embedded-request';
 
 export interface SupertestChecker {
   (res: supertest.Response): supertest.Response;
@@ -25,10 +26,6 @@ export type ValidateSettings = {
 };
 
 export type ValidateOptions = Partial<ValidateSettings>;
-
-interface ResponseWithEmbeddedRequest extends supertest.Response {
-  request: supertest.Request;
-}
 
 const defaultValidateSettings: ValidateSettings = {
   request: true,
