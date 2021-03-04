@@ -76,3 +76,9 @@ export class OpenapiOperationValidationError extends OpenapiOperationError {
     this.diagnostics = diagnostics;
   }
 }
+
+export class OpenapiRequestOperationValidationError extends OpenapiOperationValidationError {}
+
+export class OpenapiResponseOperationValidationError extends OpenapiOperationValidationError {}
+
+export class OpenapiSecurityOperationValidationError extends OpenapiOperationValidationError {}

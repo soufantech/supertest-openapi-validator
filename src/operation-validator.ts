@@ -18,7 +18,9 @@ import {
 } from './operation-validator.contracts';
 import {
   OpenapiOperationRoutingError,
-  OpenapiOperationValidationError,
+  OpenapiRequestOperationValidationError,
+  OpenapiSecurityOperationValidationError,
+  OpenapiResponseOperationValidationError,
 } from './errors';
 
 export { IHttpOperation } from './prism';
@@ -55,10 +57,12 @@ export const validateRequest: OperationValidator = (
     fold<
       IPrismDiagnostic[],
       IHttpRequest,
-      Result<FulfilledHttpRequest, OpenapiOperationValidationError>
+      Result<FulfilledHttpRequest, OpenapiRequestOperationValidationError>
     >(
       (diagnostics) =>
-        failure(new OpenapiOperationValidationError(fulfilledReq, diagnostics)),
+        failure(
+          new OpenapiRequestOperationValidationError(fulfilledReq, diagnostics),
+        ),
       () => success(fulfilledReq),
     ),
   );
@@ -76,10 +80,15 @@ export const validateSecurity: OperationValidator = (
     fold<
       IPrismDiagnostic[],
       Pick<IHttpRequest, 'url' | 'headers'>,
-      Result<FulfilledHttpRequest, OpenapiOperationValidationError>
+      Result<FulfilledHttpRequest, OpenapiSecurityOperationValidationError>
     >(
       (diagnostics) =>
-        failure(new OpenapiOperationValidationError(fulfilledReq, diagnostics)),
+        failure(
+          new OpenapiSecurityOperationValidationError(
+            fulfilledReq,
+            diagnostics,
+          ),
+        ),
       () => success(fulfilledReq),
     ),
   );
@@ -97,10 +106,15 @@ export const validateResponse: OperationValidator = (
     fold<
       IPrismDiagnostic[],
       IHttpResponse,
-      Result<FulfilledHttpRequest, OpenapiOperationValidationError>
+      Result<FulfilledHttpRequest, OpenapiResponseOperationValidationError>
     >(
       (diagnostics) =>
-        failure(new OpenapiOperationValidationError(fulfilledReq, diagnostics)),
+        failure(
+          new OpenapiResponseOperationValidationError(
+            fulfilledReq,
+            diagnostics,
+          ),
+        ),
       () => success(fulfilledReq),
     ),
   );
