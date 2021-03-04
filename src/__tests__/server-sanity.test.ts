@@ -60,23 +60,27 @@ describe('Endpoint GET /secret', () => {
       .get(`/secret`)
       .expect('Content-Type', /application\/json/)
       .expect(200)
-      .expect({ secret: 'Secret exposed!' });
+      .expect({ secret: 'Secret endpoint exposed!' });
   });
 });
 
 describe('Endpoint POST /users', () => {
-  test('returns an application/json 201 response with the posted content in the body.', async () => {
+  test('returns an application/json 201 response with a user resource in the body.', async () => {
     const BODY = {
       email: 'jane@example.com',
       username: 'jane',
     };
 
-    await request
+    const res = await request
       .post(`/users`)
       .send(BODY)
       .expect('Content-Type', /application\/json/)
-      .expect(201)
-      .expect(BODY);
+      .expect(201);
+
+    expect(res.body).toEqual({
+      user: BODY,
+      createdAt: expect.any(String),
+    });
   });
 });
 

@@ -25,7 +25,9 @@ server.get('/message', (req, res) => {
 });
 
 server.post('/users', (req, res) => {
-  res.status(201).json(req.body);
+  res
+    .status(201)
+    .json({ user: req.body, createdAt: new Date(Date.now()).toISOString() });
 });
 
 server.get('/users/johndoe', (req, res) => {
@@ -48,7 +50,7 @@ server.get('/users/johndoe', (req, res) => {
 });
 
 server.get('/secret', (_req, res) => {
-  res.status(200).json({ secret: 'Secret exposed!' });
+  res.status(200).json({ secret: 'Secret endpoint exposed!' });
 });
 
 server.use((_req, res) => {
