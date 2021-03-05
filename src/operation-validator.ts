@@ -12,18 +12,32 @@ import { fold } from 'fp-ts/Either';
 import { pipe } from 'fp-ts/function';
 import { success, failure, Result } from '@soufantech/result';
 import {
-  FulfilledHttpRequest,
-  OperationRouter,
-  OperationValidator,
-} from './operation-validator.contracts';
-import {
   OpenapiOperationRoutingError,
   OpenapiRequestOperationValidationError,
   OpenapiSecurityOperationValidationError,
   OpenapiResponseOperationValidationError,
+  OpenapiOperationError,
 } from './errors';
-
 export { IHttpOperation } from './prism';
+
+export type FulfilledHttpRequest = {
+  req: IHttpRequest;
+  res: IHttpResponse;
+};
+
+export interface OperationValidator {
+  (operation: IHttpOperation, fulfilledRequest: FulfilledHttpRequest): Result<
+    FulfilledHttpRequest,
+    OpenapiOperationError
+  >;
+}
+
+export interface OperationRouter {
+  (
+    operations: IHttpOperation[],
+    fulfilledRequest: FulfilledHttpRequest,
+  ): Result<IHttpOperation, OpenapiOperationRoutingError>;
+}
 
 export const routeOperation: OperationRouter = (
   operations: IHttpOperation[],
