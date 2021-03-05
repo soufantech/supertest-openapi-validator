@@ -20,23 +20,23 @@ export interface SupertestChecker {
 }
 
 export type ValidateSettings = {
-  response: boolean;
-  request: boolean;
   security: boolean;
+  request: boolean;
+  response: boolean;
 };
 
 export type ValidateOptions = Partial<ValidateSettings>;
 
 const defaultValidateSettings: ValidateSettings = {
+  security: true,
   request: true,
   response: true,
-  security: true,
 };
 
 const validators: Record<keyof ValidateSettings, OperationValidator> = {
+  security: validateSecurity,
   request: validateRequest,
   response: validateResponse,
-  security: validateSecurity,
 };
 
 function filterValidator(selection: ValidateOptions): OperationValidator[] {
