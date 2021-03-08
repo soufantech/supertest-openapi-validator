@@ -75,6 +75,7 @@
     "@stoplight/prism-cli": "^4.1.2",
     "@stoplight/prism-http": "^4.1.2",
     "@stoplight/types": "^11.9.0",
+    "@types/pino": "^6.3.6",
     "@types/supertest": "^2.0.10",
     "fp-ts": "^2.9.5"
   }
