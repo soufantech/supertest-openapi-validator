@@ -2,6 +2,7 @@ import { IPrismDiagnostic } from './prism';
 import { FulfilledHttpRequest } from './operation-validator';
 
 export { IPrismDiagnostic } from './prism';
+export { FulfilledHttpRequest } from './operation-validator';
 
 export class OpenapiOperationError extends Error {
   constructor(message: string, fulfilledHttpRequest: FulfilledHttpRequest) {
