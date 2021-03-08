@@ -1,5 +1,5 @@
 import { IPrismDiagnostic } from './prism';
-import { FulfilledHttpRequest } from './operation-validator.contracts';
+import { FulfilledHttpRequest } from './operation-validator';
 
 export { IPrismDiagnostic } from './prism';
 

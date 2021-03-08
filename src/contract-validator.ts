@@ -2,15 +2,13 @@ import supertest from 'supertest';
 import { translateRequest, translateResponse } from './translators';
 import { Result, success, failure } from '@soufantech/result';
 import {
-  FulfilledHttpRequest,
-  OperationValidator,
-} from './operation-validator.contracts';
-import {
   IHttpOperation,
   routeOperation,
   validateSecurity,
   validateRequest,
   validateResponse,
+  FulfilledHttpRequest,
+  OperationValidator,
 } from './operation-validator';
 import { OpenapiOperationError } from './errors';
 import { ResponseWithEmbeddedRequest } from './response-with-embedded-request';
